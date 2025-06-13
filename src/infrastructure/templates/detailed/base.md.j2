@@ -1,0 +1,511 @@
+# {{ name }}
+
+## Table of Contents
+
+{% for section in sections %}
+{% if section != "table_of_contents" %}
+- [{{ section|title|replace("_", " ") }}](#{{ section|lower|replace("_", "-") }})
+{% endif %}
+{% endfor %}
+
+{% if "overview" in sections %}
+## Overview
+
+{{ description }}
+
+{% if name is defined and '_' in name or '-' in name %}
+**{{ name|replace('_', ' ')|replace('-', ' ')|title }}** - {% endif %}{% if features|length > 0 %}a tool for {{ features[0].description|lower }}{% if features|length > 1 %} and {{ features[1].description|lower }}{% endif %}.
+{% else %}
+{% if technologies|selectattr('category', 'equalto', 'language')|list|length > 0 %}
+This project is built with {{ technologies|selectattr('category', 'equalto', 'language')|list|first|attr('name') }}.
+{% endif %}
+{% endif %}
+
+{% if metadata.has_documentation %}
+Documentation is available in the project directory.
+{% endif %}
+
+### Target Audience
+
+*Describe the target audience here*
+
+### Key Features
+
+{% if features|length > 0 %}
+{% for feature in features %}
+- {{ feature.name }}: {{ feature.description }}
+{% endfor %}
+{% else %}
+*List key features here*
+{% endif %}
+
+{% endif %}
+
+{% if "features" in sections and features %}
+## Features
+
+{% for feature in features %}
+### {{ feature.name }}
+
+{{ feature.description }}
+
+{% endfor %}
+{% endif %}
+
+{% if "technologies" in sections %}
+## Technologies
+
+{% if technologies %}
+### Development
+
+{% if technologies|selectattr('category', 'equalto', 'language')|list|length > 0 %}
+#### Programming Languages
+{% for tech in technologies|selectattr('category', 'equalto', 'language')|list %}
+- **{{ tech.name }}**{% if tech.version %} ({{ tech.version }}){% endif %}
+
+{% endfor %}
+{% endif %}
+
+{% if technologies|selectattr('category', 'equalto', 'framework')|list|length > 0 %}
+#### Frameworks
+{% for tech in technologies|selectattr('category', 'equalto', 'framework')|list %}
+- **{{ tech.name }}**{% if tech.version %} ({{ tech.version }}){% endif %}
+
+{% endfor %}
+{% endif %}
+
+{% if technologies|selectattr('category', 'equalto', 'frontend')|list|length > 0 or technologies|selectattr('category', 'equalto', 'backend')|list|length > 0 %}
+#### Front-end / Back-end
+{% for tech in technologies|selectattr('category', 'equalto', 'frontend')|list %}
+- **{{ tech.name }}** (Front-end){% if tech.version %} ({{ tech.version }}){% endif %}
+
+{% endfor %}
+{% for tech in technologies|selectattr('category', 'equalto', 'backend')|list %}
+- **{{ tech.name }}** (Back-end){% if tech.version %} ({{ tech.version }}){% endif %}
+
+{% endfor %}
+{% endif %}
+
+{% if technologies|selectattr('category', 'equalto', 'other')|list|length > 0 %}
+#### Other
+{% for tech in technologies|selectattr('category', 'equalto', 'other')|list %}
+- **{{ tech.name }}**{% if tech.version %} ({{ tech.version }}){% endif %}
+
+{% endfor %}
+{% endif %}
+
+### Infrastructure
+
+{% if technologies|selectattr('category', 'equalto', 'database')|list|length > 0 %}
+#### Database
+{% for tech in technologies|selectattr('category', 'equalto', 'database')|list %}
+- **{{ tech.name }}**{% if tech.version %} ({{ tech.version }}){% endif %}
+
+{% endfor %}
+{% endif %}
+
+{% if technologies|selectattr('category', 'equalto', 'devops')|list|length > 0 %}
+#### DevOps
+{% for tech in technologies|selectattr('category', 'equalto', 'devops')|list %}
+- **{{ tech.name }}**{% if tech.version %} ({{ tech.version }}){% endif %}
+
+{% endfor %}
+{% endif %}
+
+### Testing
+
+{% if technologies|selectattr('category', 'equalto', 'testing')|list|length > 0 %}
+{% for tech in technologies|selectattr('category', 'equalto', 'testing')|list %}
+- **{{ tech.name }}**{% if tech.version %} ({{ tech.version }}){% endif %}
+
+{% endfor %}
+{% endif %}
+{% else %}
+*List technologies here*
+{% endif %}
+
+{% endif %}
+
+{% if "architecture" in sections %}
+## Architecture
+
+{% if metadata.architecture_description is defined %}
+{{ metadata.architecture_description }}
+{% else %}
+*Describe the architecture of the project here*
+{% endif %}
+
+{% if technologies|selectattr('category', 'equalto', 'architecture')|list|length > 0 %}
+### Architecture Patterns
+{% for tech in technologies|selectattr('category', 'equalto', 'architecture')|list %}
+- **{{ tech.name }}**{% if tech.version %} ({{ tech.version }}){% endif %}
+
+{% endfor %}
+{% endif %}
+
+{% if structure.tree.children|selectattr("name", "equalto", "src")|list|length > 0 %}
+{% set src_structure = structure.tree.children|selectattr("name", "equalto", "src")|first %}
+### Main Project Components
+{% for item in src_structure.children %}
+{% if item.type == 'directory' %}
+- **{{ item.name }}/**{% if item.name.lower() == 'core' %} - main business logic{% 
+elif item.name.lower() == 'models' or item.name.lower() == 'model' %} - data models{% 
+elif item.name.lower() == 'services' %} - services for working with external systems{% 
+elif item.name.lower() == 'utils' or item.name.lower() == 'helpers' %} - utility functions and helpers{% 
+elif item.name.lower() == 'config' %} - project configuration{% 
+elif item.name.lower() == 'controllers' %} - request handlers and controllers{% 
+elif item.name.lower() == 'views' %} - view components{% 
+elif item.name.lower() == 'ui' %} - user interface components{% 
+elif item.name.lower() == 'api' %} - API endpoints{% 
+elif item.name.lower() == 'db' or item.name.lower() == 'database' %} - database interaction{% 
+elif item.name.lower() == 'tests' %} - project tests{% 
+else %} - project component{% endif %}
+
+{% endif %}
+{% endfor %}
+{% endif %}
+
+{% endif %}
+
+{% if "installation" in sections %}
+## Installation
+
+### Prerequisites
+
+{% if "C#" in technologies|map(attribute="name") or ".NET" in technologies|map(attribute="name") %}
+- .NET SDK (recommended version 6.0 or later)
+- Visual Studio or Visual Studio Code
+{% elif "Java" in technologies|map(attribute="name") %}
+- JDK (recommended version 11 or later)
+- Maven or Gradle build tools
+{% elif "Kotlin" in technologies|map(attribute="name") %}
+- JDK (recommended version 11 or later)
+- Kotlin compiler
+- Maven or Gradle build tools
+{% elif "Python" in technologies|map(attribute="name") %}
+- Python (recommended version 3.8 or later)
+- pip (package manager)
+{% elif "Node.js" in technologies|map(attribute="name") or "JavaScript" in technologies|map(attribute="name") %}
+- Node.js (recommended version 14 or later)
+- npm or yarn package manager
+{% elif "Rust" in technologies|map(attribute="name") %}
+- Rust and Cargo (recommended version 1.56 or later)
+{% elif "Go" in technologies|map(attribute="name") %}
+- Go (recommended version 1.16 or later)
+{% else %}
+{% if technologies|selectattr('category', 'equalto', 'language')|list|length > 0 %}
+- {{ technologies|selectattr('category', 'equalto', 'language')|list|first|attr('name') }}{% if technologies|selectattr('category', 'equalto', 'language')|list|first|attr('version') %} {{ technologies|selectattr('category', 'equalto', 'language')|list|first|attr('version') }}{% endif %}
+{% endif %}
+{% endif %}
+
+{% if technologies|selectattr('category', 'equalto', 'database')|list|length > 0 %}
+- {{ technologies|selectattr('category', 'equalto', 'database')|list|first|attr('name') }}
+{% endif %}
+
+### Setup
+
+1. Clone the repository:
+   ```bash
+   git clone {% if metadata.repository_url %}{{ metadata.repository_url }}{% else %}[repository-url]{% endif %}
+   cd {{ name }}
+   ```
+
+2. Install dependencies:
+   {% if "Python" in technologies|map(attribute="name") %}
+   ```bash
+   pip install -r requirements.txt
+   ```
+   {% elif "Node.js" in technologies|map(attribute="name") or "JavaScript" in technologies|map(attribute="name") %}
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
+   {% elif "Rust" in technologies|map(attribute="name") %}
+   ```bash
+   cargo build
+   ```
+   {% elif "Go" in technologies|map(attribute="name") %}
+   ```bash
+   go mod download
+   ```
+   {% elif "C#" in technologies|map(attribute="name") or ".NET" in technologies|map(attribute="name") %}
+   ```bash
+   dotnet restore
+   dotnet build
+   ```
+   {% elif "Java" in technologies|map(attribute="name") %}
+   ```bash
+   # Using Maven
+   mvn clean install
+   
+   # Or using Gradle
+   ./gradlew build
+   ```
+   {% elif "Kotlin" in technologies|map(attribute="name") %}
+   ```bash
+   # Using Maven
+   mvn clean install
+   
+   # Or using Gradle
+   ./gradlew build
+   ```
+   {% else %}
+   ```bash
+   # Install dependencies according to your project's requirements
+   ```
+   {% endif %}
+
+{% if structure.tree.children|selectattr("name", "equalto", "config.json")|list|length > 0 or structure.tree.children|selectattr("name", "equalto", ".env")|list|length > 0 or structure.tree.children|selectattr("name", "equalto", "appsettings.json")|list|length > 0 %}
+3. Configure the application:
+   {% if structure.tree.children|selectattr("name", "equalto", "config.json")|list|length > 0 %}
+   ```bash
+   cp config.example.json config.json
+   # Edit config.json to match your environment
+   ```
+   {% elif structure.tree.children|selectattr("name", "equalto", ".env")|list|length > 0 %}
+   ```bash
+   cp .env.example .env
+   # Edit .env to match your environment
+   ```
+   {% elif structure.tree.children|selectattr("name", "equalto", "appsettings.json")|list|length > 0 %}
+   ```bash
+   # Edit appsettings.json to match your environment
+   ```
+   {% endif %}
+{% endif %}
+
+{% endif %}
+
+{% if "configuration" in sections %}
+## Configuration
+
+{% if structure.tree.children|selectattr("name", "equalto", "config.json")|list|length > 0 %}
+The project is configured through the `config.json` file.
+
+### Configuration Parameters
+
+- Connection settings
+- Operation parameters
+- File paths and storage locations
+{% elif structure.tree.children|selectattr("name", "equalto", ".env")|list|length > 0 %}
+The project is configured through the `.env` file.
+
+### Environment Variables
+
+- Connection settings
+- Operation parameters
+- File paths and storage locations
+{% elif structure.tree.children|selectattr("name", "equalto", "appsettings.json")|list|length > 0 %}
+The project is configured through the `appsettings.json` file.
+
+### Configuration Parameters
+
+- Connection strings
+- Application settings
+- Logging configuration
+{% else %}
+The project can be configured through the configuration files according to the platform conventions.
+
+### Configuration Parameters
+
+*Describe configuration parameters here*
+
+### Environment Variables
+
+*List environment variables here*
+{% endif %}
+
+{% endif %}
+
+{% if "project_structure" in sections and structure %}
+## Project Structure
+
+```
+{{ name }}/
+{% for item in structure.tree.children recursive %}
+{% if item.type == 'directory' and not item.name.startswith('.') and item.name.lower() not in ['node_modules', '__pycache__', 'venv', 'env', 'bin', 'obj', '.vs', '.vscode', '.idea', 'dist', 'build', 'target'] %}
+├── {{ item.name }}/
+{% for child in item.children %}
+{% if child.type == 'directory' and not child.name.startswith('.') and child.name.lower() not in ['node_modules', '__pycache__', 'venv', 'env', 'bin', 'obj', '.vs', '.vscode', '.idea', 'dist', 'build', 'target'] %}
+    ├── {{ child.name }}/
+{% for grandchild in child.children %}
+{% if grandchild.type == 'directory' and not grandchild.name.startswith('.') and grandchild.name.lower() not in ['node_modules', '__pycache__', 'venv', 'env', 'bin', 'obj', '.vs', '.vscode', '.idea', 'dist', 'build', 'target'] %}
+        ├── {{ grandchild.name }}/
+{% for greatgrandchild in grandchild.children %}
+{% if greatgrandchild.type == 'file' and not greatgrandchild.name.startswith('.') and greatgrandchild.name not in ['__init__.py', 'Thumbs.db', '.DS_Store'] and not greatgrandchild.name.endswith('.pdb') and not greatgrandchild.name.endswith('.dll') and not greatgrandchild.name.endswith('.cache') %}
+            ├── {{ greatgrandchild.name }}
+{% endif %}
+{% endfor %}
+{% elif grandchild.type == 'file' and not grandchild.name.startswith('.') and grandchild.name not in ['__init__.py', 'Thumbs.db', '.DS_Store'] and not grandchild.name.endswith('.pdb') and not grandchild.name.endswith('.dll') and not grandchild.name.endswith('.cache') %}
+        ├── {{ grandchild.name }}
+{% endif %}
+{% endfor %}
+{% elif child.type == 'file' and not child.name.startswith('.') and child.name not in ['__init__.py', 'Thumbs.db', '.DS_Store'] and not child.name.endswith('.pdb') and not child.name.endswith('.dll') and not child.name.endswith('.cache') %}
+    ├── {{ child.name }}
+{% endif %}
+{% endfor %}
+{% elif item.type == 'file' and not item.name.startswith('.') and item.name not in ['__init__.py', 'Thumbs.db', '.DS_Store'] and not item.name.endswith('.pdb') and not item.name.endswith('.dll') and not item.name.endswith('.cache') %}
+├── {{ item.name }}
+{% endif %}
+{% endfor %}
+```
+
+### Key Components
+
+{% if structure.tree.children|selectattr("name", "equalto", "src")|list|length > 0 %}
+{% set src_structure = structure.tree.children|selectattr("name", "equalto", "src")|first %}
+{% for item in src_structure.children %}
+{% if item.type == 'directory' %}
+- **{{ item.name }}/**{% if item.name.lower() == 'core' %} - Core business logic{% 
+elif item.name.lower() == 'models' or item.name.lower() == 'model' %} - Data models and entities{% 
+elif item.name.lower() == 'services' %} - Services for working with external systems{% 
+elif item.name.lower() == 'utils' or item.name.lower() == 'helpers' %} - Utility functions and helpers{% 
+elif item.name.lower() == 'config' %} - Project configuration{% 
+elif item.name.lower() == 'controllers' %} - Request handlers and controllers{% 
+elif item.name.lower() == 'views' %} - View components{% 
+elif item.name.lower() == 'ui' %} - User interface components{% 
+elif item.name.lower() == 'api' %} - API endpoints{% 
+elif item.name.lower() == 'db' or item.name.lower() == 'database' %} - Database interaction{% 
+elif item.name.lower() == 'tests' %} - Project tests{% 
+else %} - Project component{% endif %}
+
+{% endif %}
+{% endfor %}
+{% else %}
+*Describe key components here*
+{% endif %}
+
+{% endif %}
+
+{% if "api_documentation" in sections %}
+## API Documentation
+
+{% if "Node.js" in technologies|map(attribute="name") or "JavaScript" in technologies|map(attribute="name") %}
+### REST API Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/resource` | GET | Retrieve resources |
+| `/api/resource/:id` | GET | Retrieve a specific resource |
+| `/api/resource` | POST | Create a new resource |
+| `/api/resource/:id` | PUT | Update a specific resource |
+| `/api/resource/:id` | DELETE | Delete a specific resource |
+
+### Request and Response Examples
+
+#### Get Resources
+
+```
+GET /api/resource
+```
+
+Response:
+```json
+[
+  {
+    "id": 1,
+    "name": "Resource Name",
+    "description": "Resource description"
+  }
+]
+```
+{% else %}
+*Document API endpoints here*
+{% endif %}
+
+{% endif %}
+
+{% if "testing" in sections %}
+## Testing
+
+{% if "Python" in technologies|map(attribute="name") %}
+### Running Tests
+
+```bash
+pytest
+```
+
+### Test Coverage
+
+```bash
+pytest --cov=src
+```
+{% elif "Node.js" in technologies|map(attribute="name") or "JavaScript" in technologies|map(attribute="name") %}
+### Running Tests
+
+```bash
+npm test
+```
+
+### Test Coverage
+
+```bash
+npm run test:coverage
+```
+{% else %}
+*Describe testing approach and how to run tests*
+{% endif %}
+
+{% endif %}
+
+{% if "deployment" in sections %}
+## Deployment
+
+{% if "Docker" in technologies|map(attribute="name") %}
+### Docker Deployment
+
+```bash
+docker build -t {{ name|lower }} .
+docker run -p 8080:8080 {{ name|lower }}
+```
+{% else %}
+*Describe deployment process and environments*
+{% endif %}
+
+{% endif %}
+
+{% if "optimization" in sections %}
+## Optimization
+
+*Describe optimization strategies and performance considerations*
+
+{% endif %}
+
+{% if "roadmap" in sections %}
+## Roadmap
+
+*List planned features and improvements*
+
+{% endif %}
+
+{% if "contributing" in sections %}
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes
+4. Commit your changes (`git commit -m 'Add some amazing feature'`)
+5. Push to the branch (`git push origin feature/amazing-feature`)
+6. Submit a Pull Request
+
+Please make sure your code follows the project's coding standards and includes appropriate tests.
+
+{% endif %}
+
+{% if "license" in sections %}
+## License
+
+{% if metadata.license_type %}
+This project is licensed under the {{ metadata.license_type }} License - see the LICENSE file for details.
+{% else %}
+This project is licensed under the [LICENSE](LICENSE) file in the repository.
+{% endif %}
+{% endif %}
+
+{% if "acknowledgements" in sections %}
+## Acknowledgements
+
+*List acknowledgements here*
+
+{% endif %}

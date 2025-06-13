@@ -1,0 +1,148 @@
+# {{ name }}
+
+## Table of Contents
+
+{% for section in sections %}
+{% if section != "table_of_contents" %}
+- [{{ section|title|replace("_", " ") }}](#{{ section|lower|replace("_", "-") }})
+{% endif %}
+{% endfor %}
+
+{% if "overview" in sections %}
+## Overview
+
+{{ description }}
+
+{% if name is defined and '_' in name or '-' in name %}
+**{{ name|replace('_', ' ')|replace('-', ' ')|title }}** - {% endif %}{% if features|length > 0 %}a tool for {{ features[0].description|lower }}{% if features|length > 1 %} and {{ features[1].description|lower }}{% endif %}.
+{% else %}
+{% if technologies|selectattr('category', 'equalto', 'language')|list|length > 0 %}
+This project is built with {{ technologies|selectattr('category', 'equalto', 'language')|list|first|attr('name') }}.
+{% endif %}
+{% endif %}
+
+{% if metadata.has_documentation %}
+Documentation is available in the project directory.
+{% endif %}
+{% endif %}
+
+{% if "technologies" in sections %}
+## Technologies
+
+{% if technologies|selectattr('category', 'equalto', 'language')|list|length > 0 %}
+### Programming Languages
+{% for tech in technologies|selectattr('category', 'equalto', 'language')|list %}
+- **{{ tech.name }}**{% if tech.version %} ({{ tech.version }}){% endif %}
+
+{% endfor %}
+{% endif %}
+
+{% if technologies|selectattr('category', 'equalto', 'framework')|list|length > 0 %}
+### Frameworks
+{% for tech in technologies|selectattr('category', 'equalto', 'framework')|list %}
+- **{{ tech.name }}**{% if tech.version %} ({{ tech.version }}){% endif %}
+
+{% endfor %}
+{% endif %}
+
+{% if technologies|selectattr('category', 'equalto', 'frontend')|list|length > 0 or technologies|selectattr('category', 'equalto', 'backend')|list|length > 0 %}
+### Front-end / Back-end
+{% for tech in technologies|selectattr('category', 'equalto', 'frontend')|list %}
+- **{{ tech.name }}** (Front-end){% if tech.version %} ({{ tech.version }}){% endif %}
+
+{% endfor %}
+{% for tech in technologies|selectattr('category', 'equalto', 'backend')|list %}
+- **{{ tech.name }}** (Back-end){% if tech.version %} ({{ tech.version }}){% endif %}
+
+{% endfor %}
+{% endif %}
+
+{% if technologies|selectattr('category', 'equalto', 'database')|list|length > 0 %}
+### Database
+{% for tech in technologies|selectattr('category', 'equalto', 'database')|list %}
+- **{{ tech.name }}**{% if tech.version %} ({{ tech.version }}){% endif %}
+
+{% endfor %}
+{% endif %}
+
+{% if technologies|selectattr('category', 'equalto', 'devops')|list|length > 0 %}
+### DevOps
+{% for tech in technologies|selectattr('category', 'equalto', 'devops')|list %}
+- **{{ tech.name }}**{% if tech.version %} ({{ tech.version }}){% endif %}
+
+{% endfor %}
+{% endif %}
+
+{% if technologies|selectattr('category', 'equalto', 'testing')|list|length > 0 %}
+### Testing
+{% for tech in technologies|selectattr('category', 'equalto', 'testing')|list %}
+- **{{ tech.name }}**{% if tech.version %} ({{ tech.version }}){% endif %}
+
+{% endfor %}
+{% endif %}
+
+{% if technologies|selectattr('category', 'equalto', 'architecture')|list|length > 0 %}
+### Architecture Patterns
+{% for tech in technologies|selectattr('category', 'equalto', 'architecture')|list %}
+- **{{ tech.name }}**{% if tech.version %} ({{ tech.version }}){% endif %}
+
+{% endfor %}
+{% endif %}
+
+{% if technologies|selectattr('category', 'equalto', 'other')|list|length > 0 %}
+### Other
+{% for tech in technologies|selectattr('category', 'equalto', 'other')|list %}
+- **{{ tech.name }}**{% if tech.version %} ({{ tech.version }}){% endif %}
+
+{% endfor %}
+{% endif %}
+{% endif %}
+
+{% if "project_structure" in sections and structure %}
+## Project Structure
+
+```
+{{ name }}/
+{% for item in structure.tree.children recursive %}
+{% if item.type == 'directory' and not item.name.startswith('.') and item.name.lower() not in ['node_modules', '__pycache__', 'venv', 'env', 'bin', 'obj', '.vs', '.vscode', '.idea', 'dist', 'build', 'target'] %}
+├── {{ item.name }}/
+{% for child in item.children %}
+{% if child.type == 'directory' and not child.name.startswith('.') and child.name.lower() not in ['node_modules', '__pycache__', 'venv', 'env', 'bin', 'obj', '.vs', '.vscode', '.idea', 'dist', 'build', 'target'] %}
+    ├── {{ child.name }}/
+{% for grandchild in child.children %}
+{% if grandchild.type == 'directory' and not grandchild.name.startswith('.') and grandchild.name.lower() not in ['node_modules', '__pycache__', 'venv', 'env', 'bin', 'obj', '.vs', '.vscode', '.idea', 'dist', 'build', 'target'] %}
+        ├── {{ grandchild.name }}/
+{% for greatgrandchild in grandchild.children %}
+{% if greatgrandchild.type == 'file' and not greatgrandchild.name.startswith('.') and greatgrandchild.name not in ['__init__.py', 'Thumbs.db', '.DS_Store'] and not greatgrandchild.name.endswith('.pdb') and not greatgrandchild.name.endswith('.dll') and not greatgrandchild.name.endswith('.cache') %}
+            ├── {{ greatgrandchild.name }}
+{% endif %}
+{% endfor %}
+{% elif grandchild.type == 'file' and not grandchild.name.startswith('.') and grandchild.name not in ['__init__.py', 'Thumbs.db', '.DS_Store'] and not grandchild.name.endswith('.pdb') and not grandchild.name.endswith('.dll') and not grandchild.name.endswith('.cache') %}
+        ├── {{ grandchild.name }}
+{% endif %}
+{% endfor %}
+{% elif child.type == 'file' and not child.name.startswith('.') and child.name not in ['__init__.py', 'Thumbs.db', '.DS_Store'] and not child.name.endswith('.pdb') and not child.name.endswith('.dll') and not child.name.endswith('.cache') %}
+    ├── {{ child.name }}
+{% endif %}
+{% endfor %}
+{% elif item.type == 'file' and not item.name.startswith('.') and item.name not in ['__init__.py', 'Thumbs.db', '.DS_Store'] and not item.name.endswith('.pdb') and not item.name.endswith('.dll') and not item.name.endswith('.cache') %}
+├── {{ item.name }}
+{% endif %}
+{% endfor %}
+```
+
+{% endif %}
+
+{% if "installation" in sections %}
+## Installation
+
+1. Clone the repository: `git clone {% if metadata.repository_url %}{{ metadata.repository_url }}{% else %}[repository-url]{% endif %}`
+2. Navigate to the project directory: `cd {{ name }}`
+3. Install dependencies and build the project.
+{% endif %}
+
+{% if "usage" in sections %}
+## Usage
+
+Run the application using the instructions relevant to your project type.
+{% endif %}
