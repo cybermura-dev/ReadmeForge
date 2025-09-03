@@ -102,8 +102,8 @@ ReadmeForge is built on Clean Architecture principles with three main layers:
 
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/takeshikodev/readmeforge.git
-   cd readmeforge
+   git clone https://github.com/cybermura-dev/ReadmeForge.git
+   cd ReadmeForge
    ```
 
 2. **Install Dependencies:**
@@ -192,4 +192,4 @@ Please ensure your code follows the project's architecture and includes appropri
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-Copyright (c) 2025 Takeshiko 
+Copyright (c) 2025 cybermura
